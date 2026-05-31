@@ -1,5 +1,5 @@
 {
-  "name": "day01-first-server",
+  "name": "day02-http-methods",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -19,4 +19,3 @@
     "nodemon": "^3.1.14"
   }
 }
-
