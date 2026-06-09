@@ -1,0 +1,12 @@
+require('dotenv').config();
+const app = require('./src/app');
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`${process.env.APP_NAME} running on http://localhost:${PORT}`);
+});
+
+// server.js only has 7 lines!
+// Its ONLY job = start the server
+// Nothing else
