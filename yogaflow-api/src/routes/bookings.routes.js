@@ -1,12 +1,16 @@
 const express = require('express');
 const router = express.Router();
 
-// Bookings routes coming soon!
-router.get('/', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Bookings API coming soon!'
-  });
-});
+const {
+  handleGetAllBookings,
+  handleGetBookingById,
+  handleCreateBooking,
+  handleCancelBooking
+} = require('../controller/bookings.controller');
+
+router.get('/', handleGetAllBookings);
+router.get('/:id', handleGetBookingById);
+router.post('/', handleCreateBooking);
+router.delete('/:id', handleCancelBooking);
 
 module.exports = router;

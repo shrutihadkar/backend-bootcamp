@@ -66,5 +66,6 @@ let yogaClasses = [
     getYogaClassById,
     createYogaClass,
     updateYogaClass,
-    deleteYogaClass
+    deleteYogaClass,
+    yogaClasses
   };

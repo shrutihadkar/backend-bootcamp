@@ -73,5 +73,6 @@ let students = [
     getStudentById,
     createStudent,
     updateStudent,
-    deleteStudent
+    deleteStudent,
+    students
   };

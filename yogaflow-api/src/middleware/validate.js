@@ -31,8 +31,21 @@ const validateClassData = (req, res, next) => {
   next();
 };
 
+const validateBookingData = (req, res, next) => {
+  const { studentId, classId } = req.body;
+  if (!studentId || !classId) {
+    return res.status(400).json({
+      success: false,
+      message: 'studentId and classId are required'
+    });
+  }
+  next();
+};
+
+
 // Export both middlewares so they can be used in their respective route files
 module.exports = { 
   validateStudentData, 
-  validateClassData 
+  validateClassData,
+  validateBookingData 
 };
