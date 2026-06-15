@@ -10,6 +10,10 @@ const {
   updateTask,
   deleteTask
 } = require('../controller/tasks.controller');
+const { protect } = require('../middleware/auth');
+// All routes below require authentication
+router.use(protect);
+
 
 const { validateTaskData } = require('../middleware/validate');
 

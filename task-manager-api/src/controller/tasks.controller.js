@@ -43,7 +43,8 @@ const createTask = async (req, res) => {
       description,
       priority: priority || 'medium',
       dueDate: dueDate ? new Date(dueDate) : null,
-      isTopTask: isTopTask || false
+      isTopTask: isTopTask || false,
+      userId: req.userId  // ← ADD THIS LINE!
     });
     res.status(201).json({ success: true, data: task });
   } catch (error) {
