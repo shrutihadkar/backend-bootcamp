@@ -1,6 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../lib/prisma');
+const speakeasy = require('speakeasy');
+const QRCode = require('qrcode');
+
 
 const register = async (name, email, password) => {
   // Check if email already exists
@@ -60,4 +63,68 @@ const login = async (email, password) => {
   };
 };
 
-module.exports = { register, login };
+const setupTOTP = async (userId) => {
+  // Generate secret
+  const secret = speakeasy.generateSecret({
+    name: `TaskManager (${userId})`,
+    length: 20
+  });
+
+  // Save secret to user
+  await prisma.user.update({
+    where: { id: userId },
+    data: { totpSecret: secret.base32 }
+  });
+
+  // Generate QR code
+  const qrCode = await QRCode.toDataURL(secret.otpauth_url);
+
+  return {
+    secret: secret.base32,
+    qrCode // base64 image to scan with Google Authenticator
+  };
+};
+
+const verifyTOTP = async (userId, token) => {
+  // Get user's secret
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user || !user.totpSecret) {
+    return { error: 'TOTP not set up', code: 400 };
+  }
+
+  // Verify token
+  const verified = speakeasy.totp.verify({
+    secret: user.totpSecret,
+    encoding: 'base32',
+    token,
+    window: 1 // allow 30 second window
+  });
+
+  if (!verified) {
+    return { error: 'Invalid TOTP code', code: 401 };
+  }
+
+  // Enable TOTP if not already enabled
+  await prisma.user.update({
+    where: { id: userId },
+    data: { totpEnabled: true }
+  });
+
+  return { success: true, message: 'TOTP verified and enabled!' };
+};
+const getUserById = async (id) => {
+  const user = await prisma.user.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      totpEnabled: true,
+      createdAt: true
+    }
+  });
+  return user;
+};
+
+module.exports = { register, login, setupTOTP, verifyTOTP, getUserById };
+
